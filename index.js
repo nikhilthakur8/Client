@@ -4,10 +4,10 @@ const { connectToMongoDB } = require("./utils/connectToMongoDB");
 const userRoutes = require("./routes/userRoutes");
 const kycRoutes = require("./routes/kycRoutes");
 const authRoutes = require("./routes/authRoutes");
-const { requireAuth } = require("./middleware/auth");
-const swaggerJsdoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
-
+const { requireAuth, allowRoles } = require("./middleware/auth");
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
+const adminRoutes = require("./routes/adminRoutes");
 connectToMongoDB();
 
 const swaggerOptions = {
@@ -33,6 +33,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+app.use("/api/admin", requireAuth, allowRoles("user", "admin"), adminRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/user", requireAuth, userRoutes);
 app.use("/api/kyc", requireAuth, kycRoutes);

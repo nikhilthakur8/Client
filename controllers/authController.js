@@ -2,16 +2,28 @@ const axios = require("axios");
 const User = require("../models/User");
 const { generateToken } = require("../utils/jwt");
 const { v4: uuidv4 } = require("uuid");
-async function handleSendOtp(req, res) {
-	const body = req.body;
-	const phone = body?.phone;
+const {
+	sendOtpSchema,
+	verifyOtpSchema,
+} = require("../validations/auth.validation");
 
-	if (!/^\d{10}$/.test(phone)) {
+async function handleSendOtp(req, res) {
+	const result = sendOtpSchema.safeParse(req.body);
+
+	if (!result.success) {
+		const errorResponse = {};
+		result.error.errors.forEach((err) => {
+			const field = err.path?.[0] || "unknown";
+			const message = err.message || "Invalid input";
+			errorResponse[field] = message;
+		});
 		return res.status(400).json({
 			success: false,
-			error: "Invalid phone number format. Must be exactly 10 digits.",
+			errors: errorResponse,
 		});
 	}
+
+	const { phone } = result.data;
 
 	try {
 		const requestBody = {
@@ -40,7 +52,6 @@ async function handleSendOtp(req, res) {
 			}
 		);
 
-		// ✅ 5. Return response to client
 		res.status(200).json({ success: true, data: response.data });
 	} catch (err) {
 		const status = err.response?.status || 500;
@@ -58,25 +69,21 @@ async function handleSendOtp(req, res) {
 }
 
 async function handleVerifyOtp(req, res) {
-	if (
-		!req.body ||
-		!req.body.phone ||
-		!req.body.verification_id ||
-		!req.body.otp
-	) {
+	const result = verifyOtpSchema.safeParse(req.body);
+
+	if (!result.success) {
 		return res.status(400).json({
 			success: false,
-			message: "Phone number, verification ID, and OTP are required.",
+			errors: result.error.errors.map((e) => e.message),
 		});
 	}
-	const { otp, verification_id, phone } = req.body;
+
+	const { otp, verification_id, phone } = result.data;
+
 	try {
 		await axios.post(
 			"https://sandbox.cashfree.com/verification/mobile360/otp/verify",
-			{
-				verification_id: verification_id,
-				otp,
-			},
+			{ verification_id, otp },
 			{
 				headers: {
 					"x-client-id": process.env.CASHFREE_CLIENT_ID,
@@ -87,12 +94,16 @@ async function handleVerifyOtp(req, res) {
 			}
 		);
 
-		const user = await User.findOneAndUpdate(
-			{ phone },
-			{ $set: { isPhoneVerified: true } },
-			{ new: true, upsert: true }
-		);
+		let user = await User.findOne({ phone });
+		if (!user) {
+			user = await User.create({ phone, isPhoneVerified: true });
+		} else {
+			user.isPhoneVerified = true;
+			await user.save();
+		}
+		console.log("User after phone verification:", user);
 		const token = await generateToken(user.toObject());
+
 		res.status(200).json({
 			success: true,
 			message: "Phone verified successfully",
@@ -104,15 +115,14 @@ async function handleVerifyOtp(req, res) {
 			err.response?.data?.message ||
 			err.response?.data?.error ||
 			err.message ||
-			"OTP send failed";
+			"OTP verification failed";
+
 		res.status(status).json({
 			success: false,
 			message,
 		});
 	}
 }
-
-module.exports = { handleVerifyOtp };
 
 module.exports = {
 	handleSendOtp,

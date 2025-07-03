@@ -1,5 +1,7 @@
-const Kyc = require("../models/Kyc");
 const axios = require("axios");
+const User = require("../models/User");
+const { kycSchema } = require("../validations/kyc.validation");
+const { v4: uuidv4 } = require("uuid");
 
 const headers = {
 	"x-client-id": process.env.CASHFREE_ONBOARDING_CLIENT_ID,
@@ -8,23 +10,47 @@ const headers = {
 };
 async function handleKycStart(req, res) {
 	try {
-		const { kycData } = req?.body;
-		const user = req.user;
-
-		if (!kycData || !user) {
-			return res
-				.status(400)
-				.json({ success: false, message: "Missing KYC data or user" });
+		const { kycData, referralCode } = req?.body;
+		const user = await User.findById(req.user._id);
+		// Validate KYC data
+		const result = kycSchema.safeParse(kycData);
+		if (!result.success) {
+			const errorResponse = {};
+			result.error.errors.forEach((err) => {
+				console.log(err.path);
+				const field = err.path?.[0] || "unknown";
+				const message = err.message || "Invalid input";
+				errorResponse[field] = message;
+			});
+			return res.status(400).json({
+				success: false,
+				errors: errorResponse,
+			});
 		}
 
-		const userKycData = await Kyc.create({
-			userId: user._id,
-			...kycData,
-		});
+		// referral code processing
+		if (referralCode && referralCode.length === 6) {
+			try {
+				await User.updateOne(
+					{ referralCode },
+					{ $inc: { referralBonus: 50 } }
+				);
+			} catch (error) {
+				console.error("Error processing referral:", error);
+				return res.json({
+					success: false,
+					message: "Invalid referral code",
+				});
+			}
+		}
 
-		console.log(headers);
+		// create kyc data in database
 
-		// 🚀 Start Cashfree KYC session
+		user.kyc.userProvidedData = kycData;
+
+		await user.save();
+
+		//  Start Cashfree KYC session
 		const response = await axios.post(
 			"https://sandbox.cashfree.com/verification/oauth2/session",
 			{
@@ -32,7 +58,7 @@ async function handleKycStart(req, res) {
 					identifier_type: "MOBILE",
 					identifier_value: user.phone,
 				},
-				verification_id: userKycData._id.toString(),
+				verification_id: uuidv4().split("-").join(""),
 			},
 			{
 				headers: {
@@ -95,10 +121,19 @@ async function handleKycCallback(req, res) {
 		);
 
 		// extract scope from cashfree response
-		await Kyc.findByIdAndUpdate(
-			{ _id: authCode },
-			getSanitizeKycData(cashfreeKyc)
+		await User.updateOne(
+			{ _id: req.user._id },
+			{
+				$set: {
+					"kyc.cashfreeKycData": getSanitizeKycData(cashfreeKyc.data),
+				},
+			}
 		);
+		res.status(200).json({
+			success: true,
+			message: "KYC data fetched successfully",
+			data: getSanitizeKycData(cashfreeKyc.data),
+		});
 	} catch (error) {
 		const status = error.response?.status || 500;
 		const message =

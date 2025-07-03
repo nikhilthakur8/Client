@@ -5,26 +5,24 @@ const {
 } = require("../controllers/authController");
 
 const authRouter = Router();
-
 /**
  * @swagger
  * /api/auth/send-otp:
  *   post:
- *     summary: Send OTP to a user's phone number
- *     description: Sends an OTP using Cashfree's Mobile360 API for phone number verification.
+ *     summary: Send OTP to user's phone number
+ *     tags:
+ *       - Auth
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - phone
  *             properties:
  *               phone:
  *                 type: string
- *                 description: 10-digit mobile number (Indian format, digits only)
  *                 example: "9876543210"
+ *                 description: 10-digit mobile number of the user
  *     responses:
  *       200:
  *         description: OTP sent successfully
@@ -38,13 +36,11 @@ const authRouter = Router();
  *                   example: true
  *                 data:
  *                   type: object
- *                   description: Response from Cashfree
  *                   example:
- *                     status: "SUCCESS"
- *                     message: "OTP Sent"
- *                     verification_id: "abc123xyz"
+ *                     reference_id: "123456"
+ *                     verification_id: "some-verification-id"
  *       400:
- *         description: Invalid phone number format
+ *         description: Invalid input
  *         content:
  *           application/json:
  *             schema:
@@ -53,58 +49,45 @@ const authRouter = Router();
  *                 success:
  *                   type: boolean
  *                   example: false
- *                 error:
- *                   type: string
- *                   example: "Invalid phone number format. Must be exactly 10 digits."
- *       500:
- *         description: OTP sending failed due to server or third-party error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: "OTP send failed"
+ *                 errors:
+ *                   type: object
+ *                   example:
+ *                     phone: "Invalid phone number format. Must be exactly 10 digits."
  */
+
 authRouter.post("/send-otp", handleSendOtp);
+
 
 
 /**
  * @swagger
  * /api/auth/verify-otp:
  *   post:
- *     summary: Verify OTP for phone number
- *     description: Verifies the OTP received on the user's phone using Cashfree's Mobile360 API. On successful verification, marks the phone number as verified and returns a JWT token.
+ *     summary: Verify OTP and log in the user
+ *     tags:
+ *       - Auth
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - phone
- *               - verification_id
- *               - otp
  *             properties:
  *               phone:
  *                 type: string
- *                 description: 10-digit mobile number
  *                 example: "9876543210"
+ *                 description: 10-digit mobile number
  *               verification_id:
  *                 type: string
- *                 description: Verification ID received during OTP send
- *                 example: "abc123xyz"
+ *                 example: "some-verification-id"
+ *                 description: Verification ID from send-otp
  *               otp:
  *                 type: string
- *                 description: The OTP received by the user
- *                 example: "123456"
+ *                 example: "1234"
+ *                 description: OTP received by user
  *     responses:
  *       200:
- *         description: OTP verified successfully, user authenticated
+ *         description: OTP verified, token returned
  *         content:
  *           application/json:
  *             schema:
@@ -118,9 +101,9 @@ authRouter.post("/send-otp", handleSendOtp);
  *                   example: "Phone verified successfully"
  *                 token:
  *                   type: string
- *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *                   example: "jwt.token.here"
  *       400:
- *         description: Missing or invalid input fields
+ *         description: Validation error or wrong input
  *         content:
  *           application/json:
  *             schema:
@@ -129,11 +112,14 @@ authRouter.post("/send-otp", handleSendOtp);
  *                 success:
  *                   type: boolean
  *                   example: false
- *                 message:
- *                   type: string
- *                   example: "Phone number, verification ID, and OTP are required."
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   example:
+ *                     - "Invalid phone number format"
  *       500:
- *         description: OTP verification failed or server error
+ *         description: Server or Cashfree error
  *         content:
  *           application/json:
  *             schema:

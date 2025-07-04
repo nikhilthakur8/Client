@@ -20,7 +20,16 @@ const verifyOtpSchema = z.object({
 	otp: z.string().min(4, "OTP must be at least 4 digits."),
 });
 
+const adminLoginSchema = z.object({
+	email: z
+		.string()
+		.email("Invalid email format.")
+		.nonempty("Email is required."),
+	password: z.string().min(6, "Password must be at least 6 characters long."),
+});
+
 module.exports = {
 	sendOtpSchema,
 	verifyOtpSchema,
+	adminLoginSchema,
 };

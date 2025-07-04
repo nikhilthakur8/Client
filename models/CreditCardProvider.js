@@ -43,6 +43,10 @@ const creditCardProviderSchema = new mongooose.Schema({
 	},
 	features: [String],
 	eligibilityCriteria: [String],
+	isActive: {
+		type: Boolean,
+		default: true,
+	},
 });
 
 const CreditCardProvider = mongooose.model(

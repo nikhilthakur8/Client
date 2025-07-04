@@ -2,6 +2,7 @@ const { Router } = require("express");
 const {
 	handleVerifyOtp,
 	handleSendOtp,
+	handleAdminLogin,
 } = require("../controllers/authController");
 
 const authRouter = Router();
@@ -56,8 +57,6 @@ const authRouter = Router();
  */
 
 authRouter.post("/send-otp", handleSendOtp);
-
-
 
 /**
  * @swagger
@@ -134,5 +133,107 @@ authRouter.post("/send-otp", handleSendOtp);
  */
 
 authRouter.post("/verify-otp", handleVerifyOtp);
+
+
+/**
+ * @swagger
+ * /api/auth/admin/login:
+ *   post:
+ *     summary: Admin login
+ *     description: Logs in an admin user and returns a JWT token.
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: test@test.com
+ *               password:
+ *                 type: string
+ *                 example: 123456
+ *     responses:
+ *       200:
+ *         description: Admin login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Admin login successful
+ *                 token:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6...
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 60f6b3c4c456c4a3e8a2d7a9
+ *                     fullName:
+ *                       type: string
+ *                       example: Testing
+ *                     email:
+ *                       type: string
+ *                       example: test@test.com
+ *                     role:
+ *                       type: string
+ *                       example: admin
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *       401:
+ *         description: Invalid password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Invalid password
+ *       404:
+ *         description: Admin not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Admin not found
+ *       500:
+ *         description: Server error
+ */
+authRouter.post("/admin/login", handleAdminLogin);
 
 module.exports = authRouter;

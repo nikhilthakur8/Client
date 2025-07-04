@@ -51,6 +51,10 @@ const loanProviderSchema = new mongoose.Schema({
 	websiteLink: String,
 	features: [String],
 	EligibilityCriteria: [String],
+	isActive: {
+		type: Boolean,
+		default: true,
+	},
 });
 
 const LoanProvider = mongoose.model("LoanProvider", loanProviderSchema);

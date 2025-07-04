@@ -110,7 +110,6 @@ const UserSchema = new mongoose.Schema(
 		},
 		phone: {
 			type: String,
-			required: true,
 			unique: true,
 		},
 		isPhoneVerified: {
@@ -141,6 +140,7 @@ const UserSchema = new mongoose.Schema(
 			default: function () {
 				return this._id.toString().slice(-6).toUpperCase();
 			},
+			unique: true,
 		},
 		referralBonus: {
 			type: Number,

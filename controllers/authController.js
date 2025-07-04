@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require("uuid");
 const {
 	sendOtpSchema,
 	verifyOtpSchema,
+	adminLoginSchema,
 } = require("../validations/auth.validation");
 
 async function handleSendOtp(req, res) {
@@ -72,9 +73,15 @@ async function handleVerifyOtp(req, res) {
 	const result = verifyOtpSchema.safeParse(req.body);
 
 	if (!result.success) {
+		const errorResponse = {};
+		result.error.errors.forEach((err) => {
+			const field = err.path?.[0] || "unknown";
+			const message = err.message || "Invalid input";
+			errorResponse[field] = message;
+		});
 		return res.status(400).json({
 			success: false,
-			errors: result.error.errors.map((e) => e.message),
+			errors: errorResponse,
 		});
 	}
 
@@ -124,7 +131,61 @@ async function handleVerifyOtp(req, res) {
 	}
 }
 
+async function handleAdminLogin(req, res) {
+	const result = adminLoginSchema.safeParse(req.body);
+
+	if (!result.success) {
+		const errorResponse = {};
+		result.error.errors.forEach((err) => {
+			const field = err.path?.[0] || "unknown";
+			const message = err.message || "Invalid input";
+			errorResponse[field] = message;
+		});
+		return res.status(400).json({
+			success: false,
+			errors: errorResponse,
+		});
+	}
+
+	const { email, password } = result.data;
+
+	try {
+		const admin = await User.findOne({ email, role: "admin" });
+
+		if (!admin) {
+			return res.status(404).json({
+				success: false,
+				message: "Admin not found",
+			});
+		}
+
+		if (admin.password !== password) {
+			return res.status(401).json({
+				success: false,
+				message: "Invalid password",
+			});
+		}
+
+		const { password: _, referralCode, ...safeAdmin } = admin.toObject();
+		const token = await generateToken(safeAdmin);
+
+		res.status(200).json({
+			success: true,
+			message: "Admin login successful",
+			token,
+			user: safeAdmin,
+		});
+	} catch (err) {
+		res.status(500).json({
+			success: false,
+			message: "Server error",
+			error: err.message,
+		});
+	}
+}
+
 module.exports = {
 	handleSendOtp,
 	handleVerifyOtp,
+	handleAdminLogin,
 };

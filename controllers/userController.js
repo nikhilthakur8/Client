@@ -76,7 +76,6 @@ async function handleSubscription(req, res) {
 		});
 	}
 }
-
 module.exports = {
 	handleGetProfile,
 	handleSubscription,

@@ -1,9 +1,28 @@
 const express = require("express");
-const { handleCreateLoanProvider, handleGetAllLoanProviders, handleUpdateLoanProvider, handleDeleteLoanProvider } = require("../controllers/loanProviderController");
-const { handleAddCreditCardProvider, handleListCreditCardProviders, handleUpdateCreditCardProvider, handleDeleteCreditCardProvider } = require("../controllers/creditCardProviderController");
-const { handleCreateOfferLimit, handleGetOfferLimit, handleUpdateOfferLimit} = require("../controllers/offerLimitController");
+const {
+	handleCreateLoanProvider,
+	handleGetAllLoanProviders,
+	handleUpdateLoanProvider,
+	handleDeleteLoanProvider,
+} = require("../controllers/loanProviderController");
+const {
+	handleAddCreditCardProvider,
+	handleListCreditCardProviders,
+	handleUpdateCreditCardProvider,
+	handleDeleteCreditCardProvider,
+} = require("../controllers/creditCardProviderController");
+const {
+	handleCreateOfferLimit,
+	handleGetOfferLimit,
+	handleUpdateOfferLimit,
+} = require("../controllers/offerLimitController");
+const {
+	handleCreateEmployee,
+	handleListEmployees,
+	handleUpdateEmployee,
+	handleDeleteEmployee,
+} = require("../controllers/employeeController");
 const adminRouter = express.Router();
-
 
 //  Loan Provider Routes
 /**
@@ -222,7 +241,10 @@ adminRouter.get("/credit-card-providers/list", handleListCreditCardProviders);
  *         description: Credit Card Provider updated successfully
  */
 
-adminRouter.put("/credit-card-providers/update/:id", handleUpdateCreditCardProvider);
+adminRouter.put(
+	"/credit-card-providers/update/:id",
+	handleUpdateCreditCardProvider
+);
 /**
  * @swagger
  * /api/admin/credit-card-providers/delete/{id}:
@@ -242,8 +264,10 @@ adminRouter.put("/credit-card-providers/update/:id", handleUpdateCreditCardProvi
  *         description: Credit Card Provider deleted successfully
  */
 
-adminRouter.delete("/credit-card-providers/delete/:id", handleDeleteCreditCardProvider);
-
+adminRouter.delete(
+	"/credit-card-providers/delete/:id",
+	handleDeleteCreditCardProvider
+);
 
 // Offer Limit Routes
 /**
@@ -312,6 +336,135 @@ adminRouter.get("/offer-limits/list", handleGetOfferLimit);
 
 adminRouter.put("/offer-limits/update", handleUpdateOfferLimit);
 
-
+// Employee Management Routes
+/**
+ * @swagger
+ * /api/admin/employees/create:
+ *   post:
+ *     summary: Create a new employee
+ *     tags:
+ *       - Employee
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - fullName
+ *               - employeeId
+ *               - phone
+ *               - email
+ *               - password
+ *               - address
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *                 example: "John Doe"
+ *               employeeId:
+ *                 type: string
+ *                 example: "EMP001"
+ *               phone:
+ *                 type: string
+ *                 example: "9876543210"
+ *               email:
+ *                 type: string
+ *                 example: "john@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "StrongP@ssw0rd"
+ *               address:
+ *                 type: string
+ *                 example: "123 Main Street, City"
+ *     responses:
+ *       201:
+ *         description: Employee created successfully
+ *       400:
+ *         description: Validation failed
+ *       500:
+ *         description: Server error
+ */
+adminRouter.post("/employees/create", handleCreateEmployee);
+/**
+ * @swagger
+ * /api/admin/employees/list:
+ *   get:
+ *     summary: Get the list of all employees
+ *     tags:
+ *       - Employee
+ *     responses:
+ *       200:
+ *         description: Successfully fetched employee list
+ *       500:
+ *         description: Server error
+ */
+adminRouter.get("/employees/list", handleListEmployees);
+/**
+ * @swagger
+ * /api/admin/employees/update/{id}:
+ *   put:
+ *     summary: Update employee details
+ *     tags:
+ *       - Employee
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the employee to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *                 example: "Jane Smith"
+ *               phone:
+ *                 type: string
+ *                 example: "9876543210"
+ *               email:
+ *                 type: string
+ *                 example: "jane@example.com"
+ *               address:
+ *                 type: string
+ *                 example: "456 Another Street, City"
+ *     responses:
+ *       200:
+ *         description: Employee updated successfully
+ *       400:
+ *         description: Validation failed
+ *       404:
+ *         description: Employee not found
+ *       500:
+ *         description: Server error
+ */
+adminRouter.put("/employees/update/:id", handleUpdateEmployee);
+/**
+ * @swagger
+ * /api/admin/employees/delete/{id}:
+ *   delete:
+ *     summary: Delete an employee
+ *     tags:
+ *       - Employee
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the employee to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Employee deleted successfully
+ *       404:
+ *         description: Employee not found
+ *       500:
+ *         description: Server error
+ */
+adminRouter.delete("/employees/delete/:id", handleDeleteEmployee);
 
 module.exports = adminRouter;

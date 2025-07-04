@@ -121,18 +121,19 @@ async function handleKycCallback(req, res) {
 		);
 
 		// extract scope from cashfree response
-		await User.updateOne(
+		const updatedUser = await User.findOneAndUpdate(
 			{ _id: req.user._id },
 			{
 				$set: {
 					"kyc.cashfreeKycData": getSanitizeKycData(cashfreeKyc.data),
 				},
-			}
+			},
+			{ new: true } // <-- This returns the updated document
 		);
 		res.status(200).json({
 			success: true,
 			message: "KYC data fetched successfully",
-			data: getSanitizeKycData(cashfreeKyc.data),
+			data: updatedUser,
 		});
 	} catch (error) {
 		const status = error.response?.status || 500;

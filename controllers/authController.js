@@ -39,9 +39,9 @@ async function handleSendOtp(req, res) {
 				type: "EXPLICIT",
 			},
 		};
-
+		console.log(`${process.env.CASHFREE_API_URI}/verification/mobile360/otp/send`);
 		const response = await axios.post(
-			"https://sandbox.cashfree.com/verification/mobile360/otp/send",
+			`${process.env.CASHFREE_API_URI}/verification/mobile360/otp/send`,
 			requestBody,
 			{
 				headers: {
@@ -89,7 +89,7 @@ async function handleVerifyOtp(req, res) {
 
 	try {
 		await axios.post(
-			"https://sandbox.cashfree.com/verification/mobile360/otp/verify",
+			`${process.env.CASHFREE_API_URI}/verification/mobile360/otp/verify`,
 			{ verification_id, otp },
 			{
 				headers: {

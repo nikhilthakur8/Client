@@ -52,7 +52,7 @@ async function handleKycStart(req, res) {
 
 		//  Start Cashfree KYC session
 		const response = await axios.post(
-			"https://sandbox.cashfree.com/verification/oauth2/session",
+			`${process.env.CASHFREE_API_URI}/verification/oauth2/session`,
 			{
 				user: {
 					identifier_type: "MOBILE",
@@ -110,7 +110,7 @@ async function handleKycCallback(req, res) {
 
 		// Fetch KYC data using the access token
 		const cashfreeKyc = await axios.get(
-			"https://sandbox.cashfree.com/verification/oauth2/user-details",
+			`${process.env.CASHFREE_API_URI}/verification/oauth2/user-details`,
 			{
 				headers: {
 					Authorization: `Bearer ${accessToken}`,

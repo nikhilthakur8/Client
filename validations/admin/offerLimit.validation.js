@@ -10,12 +10,12 @@ const offerLimitSchema = z.object({
 			minScore: z
 				.number()
 				.int()
-				.min(300, "Minimum score must be at least 300")
+				.min(0, "Minimum score must be at least 0")
 				.max(900, "Maximum score is 900"),
 			maxScore: z
 				.number()
 				.int()
-				.min(300, "Minimum score must be at least 300")
+				.min(0, "Minimum score must be at least 0")
 				.max(900, "Maximum score is 900"),
 			loanAmount: z
 				.number()

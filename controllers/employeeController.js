@@ -39,7 +39,7 @@ async function handleCreateEmployee(req, res) {
 			role: "employee",
 			isPhoneVerified: true,
 		});
-		const { password, referralCode, ...safeEmployee } =
+		const { password: _, referralCode, ...safeEmployee } =
 			newEmployee.toObject();
 
 		res.status(201).json({

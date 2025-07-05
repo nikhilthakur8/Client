@@ -137,9 +137,30 @@ async function handleDeleteCreditCardProvider(req, res) {
 	}
 }
 
+async function handleGetCreditCardProvider(req, res) {
+	try {
+		const { id } = req.params;
+		const creditCardProvider = await CreditCardProvider.findById(id);
+		if (!creditCardProvider) {
+			return res.status(404).json({
+				success: false,
+				message: "Credit card provider not found",
+			});
+		}
+		res.status(200).json({ success: true, data: creditCardProvider });
+	} catch (error) {
+		res.status(500).json({
+			success: false,
+			message: "Server error",
+			error: error.message,
+		});
+	}
+}
+
 module.exports = {
 	handleAddCreditCardProvider,
 	handleListCreditCardProviders,
 	handleUpdateCreditCardProvider,
 	handleDeleteCreditCardProvider,
+	handleGetCreditCardProvider,
 };

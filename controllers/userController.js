@@ -41,7 +41,6 @@ async function handleSubscription(req, res) {
 			errors: errorResponse,
 		});
 	}
-
 	const { plan, startDate, endDate } = result.data;
 
 	try {
@@ -63,11 +62,7 @@ async function handleSubscription(req, res) {
 		return res.status(200).json({
 			success: true,
 			message: "Subscription created successfully",
-			data: {
-				plan: user.subscription.plan,
-				startDate: user.subscription.startDate,
-				endDate: user.subscription.endDate,
-			},
+			user: user,
 		});
 	} catch (error) {
 		return res.status(500).json({

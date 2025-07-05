@@ -39,7 +39,6 @@ async function handleSendOtp(req, res) {
 				type: "EXPLICIT",
 			},
 		};
-		console.log(`${process.env.CASHFREE_API_URI}/verification/mobile360/otp/send`);
 		const response = await axios.post(
 			`${process.env.CASHFREE_API_URI}/verification/mobile360/otp/send`,
 			requestBody,
@@ -108,13 +107,13 @@ async function handleVerifyOtp(req, res) {
 			user.isPhoneVerified = true;
 			await user.save();
 		}
-		console.log("User after phone verification:", user);
 		const token = await generateToken(user.toObject());
 
 		res.status(200).json({
 			success: true,
 			message: "Phone verified successfully",
 			token,
+			data: user.toObject(),
 		});
 	} catch (err) {
 		const status = err.response?.status || 500;
@@ -166,14 +165,14 @@ async function handleAdminLogin(req, res) {
 			});
 		}
 
-		const { password: _, referralCode, ...safeAdmin } = admin.toObject();
+		const { password: _, referralCode,referralBonus, ...safeAdmin } = admin.toObject();
 		const token = await generateToken(safeAdmin);
 
 		res.status(200).json({
 			success: true,
 			message: "Admin login successful",
 			token,
-			user: safeAdmin,
+			data: safeAdmin,
 		});
 	} catch (err) {
 		res.status(500).json({

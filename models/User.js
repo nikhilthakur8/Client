@@ -149,7 +149,6 @@ const UserSchema = new mongoose.Schema(
 		// for employees
 		employeeId: {
 			type: String,
-			unique: true,
 		},
 		employeeAddress: {
 			type: String,

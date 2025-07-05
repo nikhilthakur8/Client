@@ -22,6 +22,12 @@ const {
 	handleUpdateEmployee,
 	handleDeleteEmployee,
 } = require("../controllers/employeeController");
+const {
+	handleListUsers,
+	handleGetUserById,
+	handleUpdateUser,
+	handleDeleteUser,
+} = require("../controllers/userAdminController");
 const adminRouter = express.Router();
 
 //  Loan Provider Routes
@@ -1438,5 +1444,223 @@ adminRouter.put("/employees/update/:id", handleUpdateEmployee);
  */
 
 adminRouter.delete("/employees/delete/:id", handleDeleteEmployee);
+
+
+
+/**
+ * @swagger
+ * /api/admin/users/list:
+ *   get:
+ *     summary: Get All Users
+ *     description: Retrieve a list of all users in the system.
+ *     tags:
+ *       - Admin - Users
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully fetched users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Users fetched successfully
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     example:
+ *                       _id: "60f8b2f8b8b8b8b8b8b8b8b8"
+ *                       fullName: "John Doe"
+ *                       email: "john@example.com"
+ *                       phone: "9876543210"
+ *                       role: "user"
+ *                       isActive: true
+ *                       referralCode: "ABC123"
+ *                       createdAt: "2024-07-05T12:00:00Z"
+ *                       updatedAt: "2024-07-05T12:00:00Z"
+ *       401:
+ *         description: Unauthorized - Missing or invalid token
+ *       500:
+ *         description: Failed to fetch users
+ */
+adminRouter.get("/users/list", handleListUsers);
+
+/**
+ * @swagger
+ * /api/admin/users/{id}:
+ *   get:
+ *     summary: Get User by ID
+ *     description: Retrieve the details of a single user by their ID.
+ *     tags:
+ *       - Admin - Users
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the user to retrieve
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successfully fetched user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: User fetched successfully
+ *                 data:
+ *                   type: object
+ *                   example:
+ *                     _id: "60f8b2f8b8b8b8b8b8b8b8b8"
+ *                     fullName: "John Doe"
+ *                     email: "john@example.com"
+ *                     phone: "9876543210"
+ *                     role: "user"
+ *                     isActive: true
+ *                     referralCode: "ABC123"
+ *                     createdAt: "2024-07-05T12:00:00Z"
+ *                     updatedAt: "2024-07-05T12:00:00Z"
+ *       404:
+ *         description: User not found
+ *       401:
+ *         description: Unauthorized - Missing or invalid token
+ *       500:
+ *         description: Failed to fetch user
+ */
+adminRouter.get("/users/:id", handleGetUserById);
+
+/**
+ * @swagger
+ * /api/admin/users/update/{id}:
+ *   put:
+ *     summary: Update User by ID
+ *     description: Update the details of a user by their ID.
+ *     tags:
+ *       - Admin - Users
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the user to update
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             example:
+ *               fullName: "John Updated"
+ *               phone: "9876543210"
+ *               role: "user"
+ *               isActive: true
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: User updated successfully
+ *                 data:
+ *                   type: object
+ *                   example:
+ *                     _id: "60f8b2f8b8b8b8b8b8b8b8b8"
+ *                     fullName: "John Updated"
+ *                     email: "john@example.com"
+ *                     phone: "9876543210"
+ *                     role: "user"
+ *                     isActive: true
+ *                     referralCode: "ABC123"
+ *                     createdAt: "2024-07-05T12:00:00Z"
+ *                     updatedAt: "2024-07-05T12:10:00Z"
+ *       400:
+ *         description: Bad Request - Invalid inputs
+ *       404:
+ *         description: User not found
+ *       401:
+ *         description: Unauthorized - Missing or invalid token
+ *       500:
+ *         description: Failed to update user
+ */
+adminRouter.put("/users/update/:id", handleUpdateUser);
+
+/**
+ * @swagger
+ * /api/admin/users/delete/{id}:
+ *   delete:
+ *     summary: Delete User by ID
+ *     description: Permanently delete a user by their ID.
+ *     tags:
+ *       - Admin - Users
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the user to delete
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: User deleted successfully
+ *                 data:
+ *                   type: object
+ *                   example:
+ *                     _id: "60f8b2f8b8b8b8b8b8b8b8b8"
+ *                     fullName: "John Doe"
+ *                     email: "john@example.com"
+ *                     phone: "9876543210"
+ *                     role: "user"
+ *                     isActive: true
+ *                     referralCode: "ABC123"
+ *                     createdAt: "2024-07-05T12:00:00Z"
+ *                     updatedAt: "2024-07-05T12:00:00Z"
+ *       404:
+ *         description: User not found
+ *       401:
+ *         description: Unauthorized - Missing or invalid token
+ *       500:
+ *         description: Failed to delete user
+ */
+adminRouter.delete("/users/delete/:id", handleDeleteUser);
+
+
 
 module.exports = adminRouter;

@@ -128,9 +128,29 @@ async function handleDeleteLoanProvider(req, res) {
 	}
 }
 
+async function handleGetLoanProvider(req, res) {
+	try {
+		const { id } = req.params;
+		const loanProvider = await LoanProvider.findById(id);
+		if (!loanProvider) {
+			return res
+				.status(404)
+				.json({ success: false, message: "Loan provider not found" });
+		}
+		res.status(200).json({ success: true, data: loanProvider });
+	} catch (error) {
+		res.status(500).json({
+			success: false,
+			message: "Server error",
+			error: error.message,
+		});
+	}
+}
+
 module.exports = {
 	handleCreateLoanProvider,
 	handleGetAllLoanProviders,
 	handleUpdateLoanProvider,
 	handleDeleteLoanProvider,
+	handleGetLoanProvider,
 };

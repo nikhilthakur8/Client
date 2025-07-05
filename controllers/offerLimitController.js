@@ -46,12 +46,13 @@ async function handleGetOfferLimit(req, res) {
 			return res.status(404).json({
 				success: false,
 				message: "No offer limit found",
+				data: [],
 			});
 		}
 
 		return res.status(200).json({
 			success: true,
-			data: offerLimit,
+			data: [offerLimit],
 		});
 	} catch (error) {
 		console.error("Error fetching offer limit:", error);
@@ -93,4 +94,8 @@ async function handleUpdateOfferLimit(req, res) {
 	}
 }
 
-module.exports = { handleCreateOfferLimit, handleGetOfferLimit, handleUpdateOfferLimit };
+module.exports = {
+	handleCreateOfferLimit,
+	handleGetOfferLimit,
+	handleUpdateOfferLimit,
+};

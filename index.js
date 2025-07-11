@@ -9,6 +9,7 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const adminRoutes = require("./routes/adminRoutes");
 const staticRoutes = require("./routes/staticRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
 connectToMongoDB();
 
 const swaggerOptions = {
@@ -45,6 +46,7 @@ app.use("/api/admin", requireAuth, allowRoles("admin"), adminRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/user", requireAuth, userRoutes);
 app.use("/api/kyc", requireAuth, kycRoutes);
+app.use("/api/payments", paymentRoutes);
 
 app.listen(process.env.PORT || 3000, () => {
 	console.log(`Server is running on port ${process.env.PORT || 3000}`);

@@ -118,13 +118,15 @@ const UserSchema = new mongoose.Schema(
 
 		// subscription details
 		subscription: {
-			plan: {
-				type: String,
-				enum: ["premium"],
-			},
+			plan: String,
 			startDate: Date,
 			endDate: Date,
 			paymentId: String,
+			amount: Number,
+			isActive: {
+				type: Boolean,
+				default: true,
+			},
 		},
 
 		// KYC details

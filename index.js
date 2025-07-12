@@ -22,11 +22,7 @@ const swaggerOptions = {
 		},
 		servers: [
 			{
-				url: `http://localhost:${process.env.PORT || 3000}`,
-				description: "Local Development Server",
-			},
-			{
-				url: "http://31.97.186.76",
+				url: "https://api.ezepay.in",
 				description: "Production Server",
 			},
 		],

@@ -2,8 +2,8 @@ const { Cashfree, CFEnvironment } = require("cashfree-pg");
 const User = require("../models/User");
 const cashfree = new Cashfree(
 	CFEnvironment.PRODUCTION,
-	process.env.CASHFREE_CLIENT_ID,
-	process.env.CASHFREE_CLIENT_SECRET
+	process.env.CASHFREE_PG_CLIENT_ID,
+	process.env.CASHFREE_PG_CLIENT_SECRET
 );
 
 async function handleCreateOrder(req, res) {

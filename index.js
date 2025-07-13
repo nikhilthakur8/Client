@@ -11,6 +11,13 @@ const adminRoutes = require("./routes/adminRoutes");
 const staticRoutes = require("./routes/staticRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 connectToMongoDB();
+const cors = require("cors");
+app.use(
+	cors({
+		origin: "*",
+		credentials: true,
+	})
+);
 
 const swaggerOptions = {
 	swaggerDefinition: {

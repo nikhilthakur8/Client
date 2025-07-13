@@ -6,6 +6,11 @@ async function requireAuth(req, res, next) {
 		return res.status(401).json({ error: "Unauthorized: Token missing" });
 	}
 	const token = authHeader.split(" ")[1];
+	if (!token) {
+		return res
+			.status(401)
+			.json({ error: "Unauthorized: Invalid token format" });
+	}
 	const userData = await verify(token, process.env.JWT_SECRET);
 	if (!userData) {
 		return res.status(401).json({ error: "Invalid or expired token" });

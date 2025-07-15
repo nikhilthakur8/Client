@@ -8,10 +8,15 @@ const kycRouter = Router();
  * @swagger
  * /api/kyc/start:
  *   post:
- *     summary: Start the KYC session for the logged-in user
- *     description: Validates KYC data, processes referral codes, stores KYC info, and initiates a KYC session with Cashfree.
+ *     summary: Start the KYC session for the logged‑in user
+ *     description: >
+ *       Validates and stores KYC `userProvidedData` in the User document.  
+ *       Processes referral code (if given) and initiates a KYC session with Cashfree.  
+ *       Returns session information along with identifiers.
  *     tags:
  *       - KYC
+ *     security:
+ *       - bearerAuth: []   # requires Authorization: Bearer <token>
  *     requestBody:
  *       required: true
  *       content:
@@ -24,7 +29,10 @@ const kycRouter = Router();
  *               kycData:
  *                 type: object
  *                 required:
- *                   - fullName
+ *                   - firstName
+ *                   - lastName
+ *                   - gender
+ *                   - dob
  *                   - phone
  *                   - email
  *                   - employmentStatus
@@ -32,9 +40,29 @@ const kycRouter = Router();
  *                   - panNumber
  *                   - address
  *                 properties:
- *                   fullName:
+ *                   firstName:
  *                     type: string
- *                     example: "John Doe"
+ *                     example: "John"
+ *                   lastName:
+ *                     type: string
+ *                     example: "Doe"
+ *                   gender:
+ *                     type: string
+ *                     enum: [M, F, T]
+ *                     example: "M"
+ *                   dob:
+ *                     type: string
+ *                     format: date
+ *                     example: "1990-05-25"
+ *                   fatherName:
+ *                     type: string
+ *                     example: "Michael Doe"
+ *                   pincode:
+ *                     type: string
+ *                     example: "400001"
+ *                   state:
+ *                     type: string
+ *                     example: "Maharashtra"
  *                   phone:
  *                     type: string
  *                     example: "9876543210"
@@ -43,7 +71,7 @@ const kycRouter = Router();
  *                     example: "john@example.com"
  *                   employmentStatus:
  *                     type: string
- *                     enum: ["salaried", "non-salaried"]
+ *                     enum: [salaried, non-salaried]
  *                     example: "salaried"
  *                   monthlySalary:
  *                     type: number
@@ -59,7 +87,7 @@ const kycRouter = Router();
  *                     example: "400001"
  *                   salaryMode:
  *                     type: string
- *                     enum: ["NEFT", "IMPS", "CASH"]
+ *                     enum: [NEFT, IMPS, CASH]
  *                     example: "NEFT"
  *                   aadharNumber:
  *                     type: string
@@ -91,31 +119,30 @@ const kycRouter = Router();
  *                   type: object
  *                   properties:
  *                     reference_id:
- *                       type: integer
- *                       example: 3123123
+ *                       type: string
+ *                       example: "REF123456"
  *                     verification_id:
  *                       type: string
- *                       example: "123456"
+ *                       example: "VER78910"
  *                     user:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           identifier_type:
- *                             type: string
- *                             example: "MOBILE"
- *                           identifier_value:
- *                             type: string
- *                             example: "9988123456"
+ *                       type: object
+ *                       description: The user identifiers used in KYC session
+ *                       properties:
+ *                         identifier_type:
+ *                           type: string
+ *                           example: "MOBILE"
+ *                         identifier_value:
+ *                           type: string
+ *                           example: "9876543210"
  *                     expiry:
  *                       type: string
  *                       format: date-time
- *                       example: "2024-12-31T23:59:59Z"
+ *                       example: "2025-12-31T23:59:59Z"
  *                     session_id:
  *                       type: string
- *                       example: "session_id_value"
+ *                       example: "session_abc123"
  *       400:
- *         description: Invalid input data
+ *         description: Invalid KYC input
  *         content:
  *           application/json:
  *             schema:
@@ -126,6 +153,8 @@ const kycRouter = Router();
  *                   example: false
  *                 errors:
  *                   type: object
+ *                   additionalProperties:
+ *                     type: string
  *                   example:
  *                     phone: "Invalid phone number format. Must be exactly 10 digits."
  *       500:
@@ -145,6 +174,7 @@ const kycRouter = Router();
  *                   type: string
  *                   example: Internal server error
  */
+
 kycRouter.post("/start", handleKycStart);
 /**
  * @swagger

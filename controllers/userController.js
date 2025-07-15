@@ -14,6 +14,15 @@ async function handleGetProfile(req, res) {
 				message: "User not found",
 			});
 		}
+		const subscription = user?.subscription || null;
+		if (
+			subscription &&
+			subscription?.endDate &&
+			new Date(subscription.endDate) < new Date()
+		) {
+			user.subscription.isActive = false;
+		}
+		await user.save();
 		return res.status(200).json({
 			success: true,
 			data: user,
@@ -102,7 +111,10 @@ async function handleCibilCheck(req, res) {
 			data: user,
 		});
 	} catch (error) {
-		console.error("Error checking CIBIL score:", error.response?.data || error.message);
+		console.error(
+			"Error checking CIBIL score:",
+			error.response?.data || error.message
+		);
 		return res.status(500).json({
 			success: false,
 			message: "Server error: " + error.message,

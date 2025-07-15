@@ -11,6 +11,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const staticRoutes = require("./routes/staticRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 connectToMongoDB();
+const app = express();
 const cors = require("cors");
 app.use(
 	cors({
@@ -37,7 +38,6 @@ const swaggerOptions = {
 	apis: ["./routes/*.js"],
 };
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
-const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

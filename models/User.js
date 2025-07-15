@@ -4,7 +4,16 @@ const kycSchema = new mongoose.Schema(
 	{
 		// Pre-verified inputs (from user)
 		userProvidedData: {
-			fullName: String,
+			firstName: String,
+			lastName: String,
+			gender: {
+				type: String,
+				enum: ["F", "M", "T"],
+			},
+			dob: Date,
+			pincode: String,
+			state: String,
+			fatherName: String,
 			phone: String,
 			email: String,
 			employmentStatus: {
@@ -114,6 +123,9 @@ const UserSchema = new mongoose.Schema(
 		isPhoneVerified: {
 			type: Boolean,
 			default: false,
+		},
+		cibilScore: {
+			type: Number,
 		},
 
 		// subscription details

@@ -1,9 +1,32 @@
 const z = require("zod");
 
 const kycSchema = z.object({
-	fullName: z
-		.string({ required_error: "Full name is required" })
-		.min(1, "Full name is required"),
+	firstName: z
+		.string({ required_error: "First name is required" })
+		.min(1, "First name is required"),
+	lastName: z
+		.string({ required_error: "Last name is required" })
+		.min(1, "Last name is required"),
+	gender: z
+		.string()
+		.min(1)
+		.max(1)
+		.regex(/^[FMT]$/, "Invalid gender"),
+	dob: z
+		.string({ required_error: "Date of birth is required" })
+		.regex(
+			/^\d{4}-\d{2}-\d{2}$/,
+			"Date of birth must be in YYYY-MM-DD format"
+		),
+	state: z
+		.string({
+			required_error: "State is required",
+		})
+		.length(2, "State code must be exactly 2 characters"),
+	pincode: z
+		.string({ required_error: "Pincode is required" })
+		.regex(/^\d{6}$/, "Pincode must be exactly 6 digits"),
+	fatherName: z.string(),
 	phone: z
 		.string({ required_error: "Phone number is required" })
 		.regex(

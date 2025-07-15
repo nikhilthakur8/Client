@@ -43,9 +43,7 @@ async function handleKycStart(req, res) {
 				});
 			}
 		}
-
 		// create kyc data in database
-
 		user.kyc.userProvidedData = kycData;
 
 		await user.save();
@@ -67,7 +65,6 @@ async function handleKycStart(req, res) {
 				},
 			}
 		);
-
 		res.status(200).json({
 			success: true,
 			message: "KYC session started successfully",

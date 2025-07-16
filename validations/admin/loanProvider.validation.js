@@ -20,7 +20,7 @@ const loanProviderSchema = z.object({
 	minimumCreditScore: z
 		.number()
 		.int()
-		.min(300, "Minimum credit score must be at least 300")
+		.min(0, "Minimum credit score must be at least 300")
 		.max(900, "Maximum credit score is 900"),
 	minimumIncome: z
 		.number()

@@ -22,7 +22,7 @@ module.exports = userRouter;
  *     tags:
  *       - User
  *     security:
- *       - bearerAuth: []   # <- This enables "Authorization: Bearer" in Swagger UI
+ *       - bearerAuth: []   # Enables "Authorization: Bearer" in Swagger UI
  *     responses:
  *       200:
  *         description: Successfully retrieved user profile
@@ -49,21 +49,33 @@ module.exports = userRouter;
  *                     phone:
  *                       type: string
  *                       example: "1234567890"
+ *                     role:
+ *                       type: string
+ *                       example: "user"
  *                     subscription:
  *                       type: object
+ *                       nullable: true
  *                       properties:
  *                         plan:
  *                           type: string
  *                           example: "premium"
  *                         startDate:
  *                           type: string
+ *                           format: date-time
  *                           example: "2025-07-05T00:00:00.000Z"
  *                         endDate:
  *                           type: string
+ *                           format: date-time
  *                           example: "2025-08-05T00:00:00.000Z"
- *                     role:
- *                       type: string
- *                       example: "user"
+ *                         paymentId:
+ *                           type: string
+ *                           example: "pay_LvZqY7E4VQeDfW"
+ *                         amount:
+ *                           type: number
+ *                           example: 999
+ *                         isActive:
+ *                           type: boolean
+ *                           example: true
  *       401:
  *         description: Unauthorized - Missing or invalid token
  *       404:
@@ -106,9 +118,16 @@ module.exports = userRouter;
  *                     phone:
  *                       type: string
  *                       example: "9876543210"
- *                     cibilScore:
- *                       type: number
- *                       example: 780
+ *                     cibil:
+ *                       type: object
+ *                       properties:
+ *                         cibilScore:
+ *                           type: number
+ *                           example: 780
+ *                         lastFetched:
+ *                           type: string
+ *                           format: date-time
+ *                           example: "2025-07-15T12:34:56.000Z"
  *                     kyc:
  *                       type: object
  *                       properties:
@@ -150,9 +169,11 @@ module.exports = userRouter;
  *                       example: "user"
  *                     createdAt:
  *                       type: string
+ *                       format: date-time
  *                       example: "2025-07-01T10:20:30.000Z"
  *                     updatedAt:
  *                       type: string
+ *                       format: date-time
  *                       example: "2025-07-10T15:45:00.000Z"
  *       400:
  *         description: KYC not completed or CIBIL score not found

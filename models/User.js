@@ -89,6 +89,38 @@ const kycSchema = new mongoose.Schema(
 	}
 );
 
+const subscriptionSchema = new mongoose.Schema(
+	{
+		plan: String,
+		startDate: Date,
+		endDate: Date,
+		paymentId: String,
+		amount: Number,
+		isActive: {
+			type: Boolean,
+			default: true,
+		},
+	},
+	{
+		_id: false,
+	}
+);
+
+const cibilSchema = new mongoose.Schema(
+	{
+		cibilScore: {
+			type: Number,
+		},
+		lastFetched: {
+			type: Date,
+			default: Date.now,
+		},
+	},
+	{
+		_id: false,
+	}
+);
+
 const UserSchema = new mongoose.Schema(
 	{
 		fullName: {
@@ -124,29 +156,21 @@ const UserSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
-		cibilScore: {
-			type: Number,
-		},
-
-		// subscription details
-		subscription: {
-			plan: String,
-			startDate: Date,
-			endDate: Date,
-			paymentId: String,
-			amount: Number,
-			isActive: {
-				type: Boolean,
-				default: true,
-			},
-		},
 
 		// KYC details
 		kyc: {
 			type: kycSchema,
-			default: {},
+			default: null,
 		},
-
+		// Subscription details
+		subscription: {
+			type: subscriptionSchema,
+			default: null,
+		},
+		cibil: {
+			type: cibilSchema,
+			default: null,
+		},
 		// referral system
 		referralCode: {
 			type: String,

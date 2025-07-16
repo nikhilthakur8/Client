@@ -5,7 +5,6 @@ const axios = require("axios");
 
 async function handleGetProfile(req, res) {
 	const userId = req.user._id;
-
 	try {
 		const user = await User.findById(userId);
 		if (!user) {
@@ -85,7 +84,6 @@ async function handleSubscription(req, res) {
 
 async function handleCibilCheck(req, res) {
 	const { _id } = req.user;
-	console.log("Checking CIBIL score for user:", _id);
 	try {
 		const user = await User.findById(_id);
 		if (!user.kyc && !user.kyc.userProvidedData) {
@@ -103,7 +101,10 @@ async function handleCibilCheck(req, res) {
 					"CIBIL score not found or user is not eligible for Loan",
 			});
 		}
-		user.cibilScore = Number(cibilScore);
+		user.cibil = {
+			score: cibilScore,
+			lastFetched: new Date(),
+		};
 		await user.save();
 		return res.status(200).json({
 			success: true,
@@ -152,11 +153,6 @@ const checkCibilScore = async (userProvidedData) => {
 				mid: process.env.ANVINEO_API_MID,
 			},
 		}
-	);
-	console.log(
-		process.env.ANVINEO_API_MID,
-		process.env.ANVINEO_API_MKEY,
-		process.env.ANVINEO_AUTHORIZATION
 	);
 	if (response.data.data.InquiryResponseHeader.SuccessCode === "0") {
 		throw new Error(

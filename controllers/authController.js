@@ -107,13 +107,19 @@ async function handleVerifyOtp(req, res) {
 			user.isPhoneVerified = true;
 			await user.save();
 		}
-		const token = await generateToken(user.toObject());
+		const userObject = user.toObject();
+		const userPayload = {
+			_id: userObject._id,
+			role: userObject.role,
+			phone: userObject.phone,
+		};
+		const token = await generateToken(userPayload);
 
 		res.status(200).json({
 			success: true,
 			message: "Phone verified successfully",
 			token,
-			data: user.toObject(),
+			data: user,
 		});
 	} catch (err) {
 		const status = err.response?.status || 500;
@@ -165,8 +171,19 @@ async function handleAdminLogin(req, res) {
 			});
 		}
 
-		const { password: _, referralCode,referralBonus, ...safeAdmin } = admin.toObject();
-		const token = await generateToken(safeAdmin);
+		const {
+			password: _,
+			referralCode,
+			referralBonus,
+			...safeAdmin
+		} = admin.toObject();
+		const adminDataPayload = {
+			_id: safeAdmin._id,
+			email: safeAdmin.email,
+			role: safeAdmin.role,
+			phone: safeAdmin?.phone,
+		};
+		const token = await generateToken(adminDataPayload);
 
 		res.status(200).json({
 			success: true,

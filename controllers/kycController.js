@@ -9,6 +9,12 @@ const headers = {
 	"x-api-version": process.env.CASHFREE_API_VERSION,
 };
 async function handleKycStart(req, res) {
+	if (!req.body?.kycData) {
+		return res.status(400).json({
+			success: false,
+			message: "KYC data is required",
+		});
+	}
 	try {
 		const { kycData, referralCode } = req?.body;
 		const user = await User.findById(req.user._id);

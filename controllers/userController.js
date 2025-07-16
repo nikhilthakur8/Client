@@ -154,7 +154,7 @@ const checkCibilScore = async (userProvidedData) => {
 			},
 		}
 	);
-	if (response.data.data.InquiryResponseHeader.SuccessCode === "0") {
+	if (response?.data?.data?.InquiryResponseHeader?.SuccessCode === "0") {
 		throw new Error(
 			"CIBIL score not found or user is not eligible for Loan"
 		);

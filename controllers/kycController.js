@@ -50,7 +50,10 @@ async function handleKycStart(req, res) {
 			}
 		}
 		// create kyc data in database
-		user.kyc.userProvidedData = kycData;
+		user.kyc = {
+			userProvidedData: kycData,
+			cashfreeKycData: null,
+		};
 
 		await user.save();
 

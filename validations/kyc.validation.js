@@ -40,7 +40,7 @@ const kycSchema = z.object({
 	employmentStatus: z.enum(["salaried", "non-salaried"], {
 		required_error: "Employment status is required",
 	}),
-	monthlySalary: z.number().optional(),
+	monthlySalary: z.number().nullable().optional(),
 	companyName: z.string().optional(),
 	companyAddress: z.string().optional(),
 	companyPinCode: z.string().optional(),

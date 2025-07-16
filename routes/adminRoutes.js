@@ -282,7 +282,7 @@ adminRouter.get("/loan-providers/list", handleGetAllLoanProviders);
 /**
  * @swagger
  * /api/admin/loan-providers/update/{id}:
- *   put:
+ *   patch:
  *     summary: Update loan provider details
  *     description: Allows the admin to update the details of an existing loan provider by ID. Only the provided fields will be updated.
  *     tags:
@@ -437,7 +437,7 @@ adminRouter.get("/loan-providers/list", handleGetAllLoanProviders);
  *         description: Failed to update loan provider
  */
 
-adminRouter.put("/loan-providers/update/:id", handleUpdateLoanProvider);
+adminRouter.patch("/loan-providers/update/:id", handleUpdateLoanProvider);
 /**
  * @swagger
  * /api/admin/loan-providers/delete/{id}:
@@ -730,7 +730,7 @@ adminRouter.get("/credit-card-providers/list", handleListCreditCardProviders);
 /**
  * @swagger
  * /api/admin/credit-card-providers/update/{id}:
- *   put:
+ *   patch:
  *     summary: Update credit card provider details
  *     description: Allows the admin to update an existing credit card provider by ID. Only the provided fields will be updated.
  *     tags:
@@ -873,7 +873,7 @@ adminRouter.get("/credit-card-providers/list", handleListCreditCardProviders);
  *         description: Failed to update Credit Card Provider
  */
 
-adminRouter.put(
+adminRouter.patch(
 	"/credit-card-providers/update/:id",
 	handleUpdateCreditCardProvider
 );
@@ -1046,7 +1046,7 @@ adminRouter.get("/offer-limits/list", handleGetOfferLimit);
 /**
  * @swagger
  * /api/admin/offer-limits/update:
- *   put:
+ *   patch:
  *     summary: Update the offer limit
  *     description: Updates the offer limit and its credit score mappings. Creates a new document if none exists.
  *     tags:
@@ -1103,7 +1103,7 @@ adminRouter.get("/offer-limits/list", handleGetOfferLimit);
  *         description: Failed to update offer limit
  */
 
-adminRouter.put("/offer-limits/update", handleUpdateOfferLimit);
+adminRouter.patch("/offer-limits/update", handleUpdateOfferLimit);
 
 // Employee Management Routes
 /**
@@ -1190,7 +1190,7 @@ adminRouter.put("/offer-limits/update", handleUpdateOfferLimit);
  *                       type: boolean
  *                       example: true
  *       400:
- *         description: Invalid input data
+ *         description: Invalid inpatch data
  *         content:
  *           application/json:
  *             schema:
@@ -1307,7 +1307,7 @@ adminRouter.get("/employees/list", handleListEmployees);
 /**
  * @swagger
  * /api/admin/employees/update/{id}:
- *   put:
+ *   patch:
  *     summary: Update an employee's details by ID
  *     description: Allows the admin to update employee information such as name, phone number, email, and address.
  *     tags:
@@ -1379,7 +1379,7 @@ adminRouter.get("/employees/list", handleListEmployees);
  *         description: Internal server error
  */
 
-adminRouter.put("/employees/update/:id", handleUpdateEmployee);
+adminRouter.patch("/employees/update/:id", handleUpdateEmployee);
 /**
  * @swagger
  * /api/admin/employees/delete/{id}:
@@ -1547,7 +1547,7 @@ adminRouter.get("/users/:id", handleGetUserById);
 /**
  * @swagger
  * /api/admin/users/update/{id}:
- *   put:
+ *   patch:
  *     summary: Update User by ID
  *     description: Update the details of a user by their ID.
  *     tags:
@@ -1599,7 +1599,7 @@ adminRouter.get("/users/:id", handleGetUserById);
  *                     createdAt: "2024-07-05T12:00:00Z"
  *                     updatedAt: "2024-07-05T12:10:00Z"
  *       400:
- *         description: Bad Request - Invalid inputs
+ *         description: Bad Request - Invalid inpatchs
  *       404:
  *         description: User not found
  *       401:
@@ -1607,7 +1607,7 @@ adminRouter.get("/users/:id", handleGetUserById);
  *       500:
  *         description: Failed to update user
  */
-adminRouter.put("/users/update/:id", handleUpdateUser);
+adminRouter.patch("/users/update/:id", handleUpdateUser);
 
 /**
  * @swagger

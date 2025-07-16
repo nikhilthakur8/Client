@@ -8,6 +8,12 @@ const cashfree = new Cashfree(
 
 async function handleCreateOrder(req, res) {
 	const { phone, _id } = req.user;
+	if (req.body?.order_amount === undefined) {
+		return res
+			.status(400)
+			.json({ success: false, error: "Order amount is required" });
+	}
+
 	const { order_amount } = req.body;
 	if (!order_amount) {
 		return res
@@ -23,7 +29,7 @@ async function handleCreateOrder(req, res) {
 			customer_email: req.user.email || "example@email.com",
 		},
 		order_meta: {
-			notify_url: `${process.env.BACKEND_URL}/api/payments/callback/callback`,
+			notify_url: `${process.env.BACKEND_URL}/api/payments/cashfree/callback`,
 		},
 	};
 	try {

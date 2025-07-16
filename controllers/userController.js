@@ -92,7 +92,13 @@ async function handleCibilCheck(req, res) {
 				message: "KYC not completed",
 			});
 		}
-		const userProvidedData = user.kyc.userProvidedData;
+		const userProvidedData = user.kyc?.userProvidedData;
+		if (!userProvidedData) {
+			return res.status(400).json({
+				success: false,
+				message: "KYC data not available",
+			});
+		}
 		const cibilScore = await checkCibilScore(userProvidedData);
 		if (!cibilScore) {
 			return res.status(400).json({
@@ -118,7 +124,10 @@ async function handleCibilCheck(req, res) {
 		);
 		return res.status(500).json({
 			success: false,
-			message: "Server error: " + error.message,
+			message:
+				"Server error: " + error.response?.data?.message ||
+				error.message ||
+				"Internal server error",
 		});
 	}
 }
@@ -160,8 +169,7 @@ const checkCibilScore = async (userProvidedData) => {
 		);
 	}
 
-	return response.data.data.CCRResponse.CIRReportDataLst[0].CIRReportData
-		.ScoreDetails[0].Value;
+	return response.data.data?.CCRResponse?.CIRReportDataLst[0]?.CIRReportData?.ScoreDetails[0]?.Value;
 };
 
 module.exports = {

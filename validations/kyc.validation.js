@@ -12,13 +12,9 @@ const kycSchema = z.object({
 		.min(1)
 		.max(1)
 		.regex(/^[FMT]$/, "Invalid gender"),
-	dob: z
-		.date({
-			required_error: "Date of birth is required",
-		})
-		.refine((date) => date <= new Date(), {
-			message: "Date of birth cannot be in the future",
-		}),
+	dob: z.string({
+		required_error: "Date of birth is required",
+	}),
 	state: z
 		.string({
 			required_error: "State is required",

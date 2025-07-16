@@ -1,7 +1,7 @@
 const { Cashfree, CFEnvironment } = require("cashfree-pg");
 const User = require("../models/User");
 const cashfree = new Cashfree(
-	CFEnvironment.PRODUCTION,
+	CFEnvironment.SANDBOX,
 	process.env.CASHFREE_PG_CLIENT_ID,
 	process.env.CASHFREE_PG_CLIENT_SECRET
 );
@@ -43,6 +43,8 @@ async function handleCreateOrder(req, res) {
 			},
 		});
 	} catch (error) {
+		// console.log("Error creating Cashfree payment session:", error);
+		// Log the error response if available
 		return res.status(500).json({
 			success: false,
 			message: "Failed to create payment session",
